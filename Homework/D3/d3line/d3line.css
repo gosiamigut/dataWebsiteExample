@@ -1,0 +1,75 @@
+body {
+	font: Georgia, sans-serif;
+	font-weight: 500;
+	font-size: 14px;
+}
+
+svg {
+	margin: 0 auto;
+	display: block;
+}
+
+.x.axis, .y.axis {
+	font: 12px Arial, sans-serif;
+}
+
+.axis path, .axis line {
+	fill: none;
+	stroke: black;
+	stroke-width: 1px;
+}
+
+.x.axis path {
+	display: none;
+}
+
+.line {
+	fill: none;
+	stroke: url(#temperature-gradient);
+	stroke-width: 2px;
+}
+
+.title {
+	font: 26px Georgia, serif;
+	font-weight: 500;
+	text-anchor: middle;
+	fill: black;
+}
+
+.subtitle {
+	font: Georgia, serif;
+	text-anchor: middle;
+}
+
+.instruction {
+	font-weight: 700;
+	font-style: italic;
+}
+
+.footer {
+	font-size: 11px;
+	text-anchor: middle;
+}
+
+.screen {
+	fill: none;
+	stroke: none;
+	pointer-events: all;
+}
+
+.focus {
+	fill: none;
+	stroke: grey;
+	stroke-width: 0.5px;
+}
+
+.focus-rect {
+	opacity: 0.6;
+}
+
+.focus-text {
+	font: 10px Arial, sans-serif;
+	text-anchor: middle;
+	font-weight: bold;
+	fill: #fff;
+}

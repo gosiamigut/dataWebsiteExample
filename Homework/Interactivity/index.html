@@ -1,0 +1,270 @@
+<!doctype html>
+<html>
+<head>
+<title>Maximum temperatures The Bilt in 2008</title>
+</head>
+<body style="font-family: Georgia, serif; text-align: center; color: #222; font-size: 13px; padding-top: 10px; height: 620px;">
+<h1 style="font-weight: normal;">Maximum temperatures The Bilt in 2008</h1>
+<p style="margin-bottom: -10px"><span style="font-weight: bold; font-style: italic;">Instructions:</span> Stop moving the cursor over the graph to see the tooltip.</p>
+<div style="margin: auto; width: 920px;">
+<div style="position: relative;">
+<canvas id="graph" width="920" height="520" style="position: absolute; top: 0; left: 0;"></canvas>
+<canvas id="pointer" width="920" height="520" style="position: absolute; top: 0; left: 0;"></canvas>
+</div>
+</div>
+<script>
+// Reads the data.
+function read_data() {
+	var file = new XMLHttpRequest();
+	var content;
+	
+	// Loads data file and stores the text in a variable.
+	file.open("GET", "http://emieldegraaf.github.io/assets/files/KNMI_20081231.txt", false);
+	file.onreadystatechange = function () {
+		if(file.readyState === 4) {
+			if(file.status === 200 || file.status == 0) {
+				content = file.responseText;
+			}
+		}
+	}
+	file.send(null);
+	
+	// Stores for every line the date and the temperature in dict (JSON)
+	lines = content.split("\n");
+	data = {};
+	value_list = [];
+	for (var i = 1; i < lines.length; i++) {
+		line = lines[i].split(",");
+		date = new Date(line[0]);
+		temperature = Number(line[1]);
+		value_list.push({x: date, y: temperature});
+	}
+	data.values = value_list;
+	
+	//TO BE CERTAIN IT's JASON
+	data = JSON.parse(JSON.stringify(data));
+	console.log(data);
+	return data;
+}
+
+function create_transform(domain, range) {
+	var alpha = (range[1] - range[0]) / (domain[1] - domain[0]);
+	var beta = range[0] - alpha * domain[0];
+	return function(x) {
+		return alpha * x + beta;
+	};
+}
+
+// Gets the lowest temperature of the data.
+function get_min_temp() {
+	min = 0;
+	for (var i = 0; i < data.values.length; i++) {
+		if (data.values[i].y < min) {
+			min = data.values[i].y;
+		}
+	}
+	return min
+}
+
+// Get the maximum temperature of the data.
+function get_max_temp() {
+	max = 0;
+	for (var i = 0; i < data.values.length; i++) {
+		if (data.values[i].y > max) {
+			max = data.values[i].y;
+		}
+	}
+	return max
+}
+
+// Draws the graph and the pointer
+function draw_graph(id) {
+	var graph = document.getElementById(id);
+	var width = graph.width;
+	var height = graph.height;
+	var paddin_x = 60;
+	var paddin_y = 50;
+	
+	var x = create_transform([0, data.values.length], [paddin_x, width - paddin_x]);
+	var y = create_transform([get_min_temp(), Math.floor(get_max_temp() / 100) * 110], [height - paddin_y, paddin_y]);
+	
+	
+	// Draws the graph
+	if (graph.getContext) {
+	
+		// Context of the graph and the style.
+		var ctx = graph.getContext('2d');
+		ctx.lineWidth = 1;
+		ctx.strokeStyle = '#ddd';
+		ctx.font = '10px Arial';
+		ctx.fillStyle = "#222";
+		ctx.textAlign = "center";
+		
+		// Draws horizontally
+		for(var i = 0; i < data.values.length; i += data.values.length / 12) {
+			d = new Date(data.values[Math.floor(i)].x);
+			year = d.getFullYear();
+			month = d.getMonth() + 1;
+			day = d.getDate()
+			if (day > 15) {
+				month += 1;
+			}
+			day = 1;
+			date = year + "/" + month + "/" + day;
+			ctx.fillText(date, x(Math.floor(i)),  y(get_min_temp()) + 20);
+			ctx.beginPath();
+			ctx.moveTo(x(i), y(get_min_temp()));
+			ctx.lineTo(x(i), y(Math.floor(get_max_temp() / 100) * 110));
+			ctx.stroke();
+		}
+		d = new Date(data.values[Math.floor(data.values.length - 1)].x);
+		date = d.getFullYear() + "/" +  (d.getMonth() + 1) + "/" +  d.getDate();
+		ctx.fillText(date, x(Math.floor(data.values.length - 1)),  y(get_min_temp()) + 20);
+		ctx.beginPath();
+		ctx.moveTo(x(data.values.length), y(get_min_temp()));
+		ctx.lineTo(x(data.values.length), y(Math.floor(get_max_temp() / 100) * 110));
+		ctx.font = 'bold 14px Arial';
+		ctx.fillText("Date", x(Math.floor(data.values.length - 1) / 2),  y(get_min_temp()) + 50);
+		ctx.stroke();
+		
+		
+		// Draws vertically
+		ctx.font = '10px Arial';		
+		for(var i = get_min_temp(); i < Math.floor(get_max_temp() / 100) * 110; i += Math.floor(get_max_temp() / 100) * 10) {
+			ctx.fillText(Math.floor(i / 10), x(0) - 20, y(i));
+			ctx.beginPath();
+			ctx.moveTo(x(0), y(i));
+			ctx.lineTo(x(data.values.length), y(i));
+			ctx.stroke();
+		}
+		ctx.fillText(Math.floor(i / 10), x(0) - 20, y(Math.floor(get_max_temp() / 100) * 110));
+		ctx.beginPath();
+		ctx.moveTo(x(0), y(Math.floor(get_max_temp() / 100) * 110));
+		ctx.lineTo(x(data.values.length), y(Math.floor(get_max_temp() / 100) * 110));
+		
+		ctx.font = 'bold 14px Arial';
+		ctx.save();
+		ctx.textAlign = "center";
+		ctx.translate(x(0) - 40, y(Math.floor(get_max_temp() / 100) * 55));
+		ctx.rotate(Math.PI / 180 * -90);
+		ctx.fillText("Temperature (\u00B0C)", 0, 0);
+		ctx.restore();
+		
+		ctx.stroke();		
+		
+		
+		
+		// Draws the line of the graph for every datapoint.
+		function get_gradient() {
+			var grad= ctx.createLinearGradient(x(data.values.length) / 2, y(0), x(data.values.length) / 2, y(get_max_temp()));
+			grad.addColorStop(0, "#339");
+			grad.addColorStop(1, "#d33");
+			return grad;
+		}
+		ctx.lineWidth = 2;
+		ctx.strokeStyle = get_gradient();
+		ctx.beginPath();
+		// Draw the line graph
+		ctx.beginPath();
+		ctx.moveTo(x(0), y(data.values[0].y));
+		for(var i = 0; i < data.values.length; i++) {
+			ctx.lineTo(x(i) + 1.5, y(data.values[i].y));
+		}
+		ctx.stroke();
+		
+		
+		
+		
+	}
+	
+	
+	// Draws the pointer
+	var pointer = document.getElementById("pointer");
+	if (pointer.getContext) {
+		
+		// Style of the pointer
+		var ct = pointer.getContext('2d');
+		var rect = pointer.getBoundingClientRect();
+		ct.lineWidth = 2;
+		ct.textAlign = "center";
+		ct.strokeStyle = 'rgba(0, 0, 0, 0.25)';
+		
+		
+		var myVar; // For setting a timeout
+		
+		//When moving the pointer...
+		pointer.addEventListener("mousemove", function myFunction(e) {
+			
+			//Clear everything of screen and clear timeOut and make a new TimeOut
+			ct.clearRect(0, 0, pointer.width, pointer.height);
+			clearTimeout(myVar);
+			myVar = setTimeout(function(){ 
+			
+				//Show the pointer when time is out (so not moved for 0.2 seconds)
+				if (e.clientX - rect.left >= paddin_x && e.clientX - rect.left <= pointer.width - paddin_x &&
+				e.clientY - rect.top >= paddin_y && e.clientY - rect.top <= pointer.height - paddin_y) {
+					ct.beginPath();
+					
+					// Draw horizontal label
+					var d = Math.floor((e.clientX - rect.left - paddin_x) / (pointer.width - paddin_x * 2) * (data.values.length - 1));
+					if (d > data.values.length / 2) {
+						ct.fillStyle = "rgba(0, 0, 0, 0.5)";
+						ct.fillRect(x(d) / 2 - 25, y(data.values[d].y), 50, 20);
+						ct.fillStyle = "#fff";
+						ct.fillText(data.values[d].y / 10 + " \u00B0C", x(d) / 2, y(data.values[d].y) + 14);
+					} else {
+						ct.fillStyle = "rgba(0, 0, 0, 0.5)";
+						ct.fillRect(x(d) + x(data.values.length - d) / 2 - 25, y(data.values[d].y), 50, 20);
+						ct.fillStyle = "#fff";
+						ct.fillText(data.values[d].y / 10 + " \u00B0C", x(d) + x(data.values.length - d) / 2, y(data.values[d].y) + 14);
+					}	
+
+					// Draw vertical label	
+					var ty = data.values[d].y;
+					if (y(data.values[d].y) > y(Math.floor(get_max_temp() / 100) * 55)) {
+						ct.fillStyle = "rgba(0, 0, 0, 0.5)";
+						dt = new Date(data.values[Math.floor(d)].x);
+						date = dt.getFullYear() + "/" +  (dt.getMonth() + 1) + "/" +  dt.getDate();
+						ct.save();
+						ct.textAlign = "center";
+						ct.translate(e.clientX - rect.left, y(ty) / 2);
+						ct.fillStyle = "rgba(0, 0, 0, 0.5)";
+						ct.rotate(Math.PI / 180 * -90);
+						ct.fillRect(-30, -20, 60, 20);
+						ct.fillStyle = "#fff";
+						ct.fillText(date, 0, -7);
+						ct.restore();
+					} else {
+						ct.fillStyle = "rgba(0, 0, 0, 0.5)";
+						dt = new Date(data.values[Math.floor(d)].x);
+						date = dt.getFullYear() + "/" +  (dt.getMonth() + 1) + "/" +  dt.getDate();
+						ct.save();
+						ct.textAlign = "center";
+						ct.translate(e.clientX - rect.left, y(ty) + y(Math.floor(get_max_temp() / 100) * 110 - ty) / 2);
+						ct.fillStyle = "rgba(0, 0, 0, 0.5)";
+						ct.rotate(Math.PI / 180 * -90);
+						ct.fillRect(-30, -20, 60, 20);
+						ct.fillStyle = "#fff";
+						ct.fillText(date, 0, -7);
+						ct.restore();
+					}
+					
+					// Draws horizontal and vertical line
+					ct.moveTo(x(0), y(data.values[d].y));
+					ct.lineTo(x(data.values.length-1), y(data.values[d].y));
+					ct.moveTo(e.clientX - rect.left, y(get_min_temp()));
+					ct.lineTo(e.clientX - rect.left, y(Math.floor(get_max_temp() / 100) * 110));
+					ct.moveTo(e.clientX - rect.left, y(data.values[d].y));
+					ct.arc(e.clientX - rect.left, y(data.values[d].y), 15, 0, 2 * Math.PI, false);
+					ct.stroke();
+				}
+			}, 200);
+		});
+	}
+}
+
+data = read_data();
+draw_graph("graph");
+</script>
+</body>
+</html>

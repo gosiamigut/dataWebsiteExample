@@ -1,0 +1,273 @@
+body {
+	margin: 0;
+	font-family: Arial, sans-serif;
+}
+
+a {
+	text-decoration: none;
+	color: inherit;
+}
+
+#top-bar {
+	background-color: #eeeeee;
+	width: 100%;
+	padding: 20px 0;
+	float: left;
+	border-bottom: 1px solid #dddddd;
+}
+
+.left-section {
+	width: 170px;
+	float: left;
+	padding-left: 40px;
+}
+
+#logo {
+	height: 40px;
+	margin-top: -5px;
+	margin-bottom: -15px;
+}
+
+.middle-section {
+	float: left;
+	padding-right: 40px;
+}
+
+#search-bar {
+	background-color: #ffffff;
+	height: 30px;
+	width: 600px;
+	float: left;
+	border: 1px solid #cccccc;
+	margin: -5px 0;
+}
+
+#search-button {
+	height: 30px;
+	width: 60px;
+	background-color: #5555ff;
+	border-bottom: 1px solid #5555ff;
+	border-top: 1px solid #5555ff;
+	border-right: 1px solid #5555ff;
+	border-top-right-radius: 3px;
+	border-bottom-right-radius: 3px;
+	float: left;
+	margin: -5px 0;
+	text-align: center;
+	color: #ffffff;
+	line-height: 30px;
+	font-size: 18px;
+}
+
+.mail-content {
+	color: #666666;
+}
+
+#account {
+	padding: 8px 0;
+	border-top: 1px solid #dddddd;
+	border-bottom: 1px solid #dddddd;
+	font-size: 14px;
+	margin-top: 20px;
+	margin-right: 40px;
+	display: block;	
+	overflow: hidden;
+}
+
+#account-text {
+	line-height: 28px;
+	margin-left: 8px;
+	display: block;
+	float: left;
+}
+
+.float-right-section {
+	float: right;
+	width: 200px;
+	text-align: right;
+	padding: 0 40px;
+}
+
+#option-bar {
+	padding: 10px 0;
+	border-bottom: 1px solid #eeeeee;
+	float: left;
+	width: 100%;
+	margin-bottom: 10px;
+}
+
+#gmail-logo {
+	display: block;
+	margin-top: 2px;
+	font-size: 20px;
+	color: #dd3333;
+}
+
+.option-button {
+	padding: 4px 6px;
+	font-size: 14px;
+	text-align: center;
+	display: block;
+	color: #666666;
+	float: left;
+	background-color: #eeeeee;
+	width: 60px;
+	border-radius: 2px;
+	margin-right: 20px;
+	border: 1px solid #cccccc;
+}
+
+.option-button-right {
+	margin-left: 20px;
+	margin-right: 0;
+	
+}
+
+#compose-button {
+	padding: 8px 0;
+	font-weight: bold;
+	text-align: center;
+	width: 110px;
+	background-color: #dd3333;
+	display: block;
+	border-radius: 2px;
+	color: #ffffff;
+	text-transform: uppercase;
+	font-size: 12px;
+}
+
+#tabs {
+	border-bottom: 1px solid #dddddd;
+	width: 100%;
+	overflow: hidden;
+	padding-bottom: 8px;
+}
+
+.tab {
+	width: 200px;
+	line-height: 40px;
+	background-color: #eeeeee;
+	float: left;
+	font-size: 14px;
+	border-left: 1px solid #dddddd;
+	border-top: 1px solid #dddddd;
+	border-bottom: 1px solid #dddddd;
+	padding: 0 20px;
+}
+
+.active {
+	background-color: #ffffff;
+	border-right: 1px solid #dddddd;
+	border-bottom: 0;
+}
+
+#tabs-section {
+	overflow: hidden;
+	padding-right: 40px;
+	width: auto;	
+}
+
+.link {
+	display: block;
+	margin: 15px 0;
+	font-size: 14px;
+}
+
+.mail {
+	background-color: #eeeeee;
+	line-height: 40px;
+	overflow: hidden;
+	font-size: 13px;
+	border-bottom: 1px solid #dddddd;
+	height: 40px;
+	white-space:nowrap;
+	display: block;
+}
+
+.date {
+	float: right;
+	padding-right: 20px;
+	background-color: #ffffff;
+	margin-right: -20px;
+	background-color: #eeeeee;
+	z-index: 1000;
+	display: block;
+	position: relative;
+	text-align: right;
+	width: 80px;
+}
+
+.unread {
+	background-color: #ffffff;
+}
+
+.mail-left {
+	width: 240px;
+	float: left;
+	padding-left: 20px;
+}
+
+.mail-right {
+	width: auto;
+	overflow: hidden;
+	padding-right: 20px;
+}
+
+#footer-left {
+	text-align: left;
+	font-size: 12px;
+	color: #666666;
+	margin: 10px 0;
+	position: absolute;
+}
+
+#footer-middle {
+	text-align: center;
+	font-size: 12px;
+	color: #666666;
+	margin: 10px 0;	
+	float: left;
+	width: 100%;
+}
+
+#footer-right {
+	text-align: right;
+	right: 40px;
+	font-size: 12px;
+	color: #666666;
+	margin: 10px 0;	
+	position: absolute;
+	
+}
+
+#footer-left > a {
+	text-decoration: underline;
+}
+
+#footer-right > a {
+	text-decoration: underline;
+}
+
+#footer-middle > a {
+	text-decoration: underline;
+}
+
+#email-link {
+	font-size: 13px;
+}
+
+#search-input {
+	width: 100%;
+	height: 100%;
+	border: 0;
+	box-sizing: border-box;
+	padding: 5px 8px;
+}
+
+#account-img {
+	border-radius: 100px;
+	width: 28px;
+	height: 28px;
+	float: left;
+	display: block;
+}

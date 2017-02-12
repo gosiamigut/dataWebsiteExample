@@ -1,0 +1,74 @@
+body {
+	text-align: center;
+}
+
+#title {
+	font-size: 36px;
+	font-weight: bold;
+	font-family: Arial, sans-serif;
+}
+
+#subtitle {
+	font-size: 24px;
+	font-family: Arial, sans-serif;
+}
+
+rect {
+	fill: #ffffff;
+	stroke: #000000;
+	stroke-width: 1;
+}
+
+.label {
+	font-size: 28px;
+	font-family: Arial, sans-serif;
+	font-weight: bold;
+}
+
+.circlexx
+{
+	fill: #ffffff;
+}
+
+.subxx
+{
+	fill: #ffffff;
+}
+
+.unxx
+{
+	fill: #ffffff;
+}
+
+.noxx
+{
+	fill: #ffffff;
+}
+
+.landxx
+{
+	fill: #ffffff;
+	stroke: #ffffff;
+	stroke-width: 2;
+	fill-rule: evenodd;
+}
+
+.coastxx
+{
+	fill: #ffffff;
+}
+
+.limitxx
+{
+	fill: #ffffff;
+}
+
+.antxx
+{
+	fill: #ffffff;
+}
+
+.oceanxx
+{
+	fill: #ffffff;
+}

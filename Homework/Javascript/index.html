@@ -1,0 +1,173 @@
+<!doctype html>
+<html>
+<head>
+<title>Responsive line graph</title>
+</head>
+<body style="margin: auto; padding: 20px; width: 80%; font-family: sans-serif; text-align: center; color: #222;">
+<h1>Responsive line graph</h1>
+<h3 style="font-weight: normal; font-style: italic;">Emiel de Graaf, 10645373</h3>
+<div style="display: inline-block;">
+<canvas id="graph1" width="600" height="400"></canvas>
+<canvas id="graph2" width="400" height="300"></canvas>
+<canvas id="graph3" width="500" height="300"></canvas>
+</div>
+<script>
+// Reads the data.
+function read_data() {
+	var file = new XMLHttpRequest();
+	var content;
+	
+	// Loads data file and stores the text in a variable.
+	file.open("GET", "http://emieldegraaf.github.io/KNMI_20081231.txt", false);
+	file.onreadystatechange = function () {
+		if(file.readyState === 4) {
+			if(file.status === 200 || file.status == 0) {
+				content = file.responseText;
+			}
+		}
+	}
+	file.send(null);
+	
+	// Stores for every line the date and the temperature in a dict.
+	lines = content.split("\n");
+	data = {};
+	value_list = [];
+	for (var i = 1; i < lines.length - 1; i++) {
+		line = lines[i].split(",");
+		date = new Date(line[0]);
+		temperature = Number(line[1]);
+		value_list.push({x: date, y: temperature});
+	}
+	data.values = value_list;
+	return data;
+}
+
+// This function is not used.
+function create_transform(domain, range) {
+	var alpha = (range[1] - range[0]) / (domain[1] - domain[0]);
+	var beta = range[0] - alpha * domain[0];
+	return function(x) {
+		return alpha * x + beta;
+	};
+}
+
+// Gets the lowest temperature of the data.
+function get_min_y() {
+	min = 0;
+	for (var i = 0; i < data.values.length; i++) {
+		if (data.values[i].y < min) {
+			min = data.values[i].y;
+		}
+	}
+	return min
+}
+
+// Get the maximum temperature of the data.
+function get_max_y() {
+	max = 0;
+	for (var i = 0; i < data.values.length; i++) {
+		if (data.values[i].y > max) {
+			max = data.values[i].y;
+		}
+	}
+	return max
+}
+
+// Draws the graph.
+function draw_graph(id, hor_lines, ver_lines) {
+	var graph = document.getElementById(id);
+	var width = graph.width;
+	var height = graph.height;
+	
+	var amount_of_lines_x = ver_lines;
+	var amount_of_lines_above_zero = hor_lines;
+	var amount_of_lines_below_zero;
+	
+	// Margin and padding from the graph inside the canvas.
+	var x_margin = 40;
+	var y_margin = 40;
+	var x_padding = 10;
+	var y_padding = 10;
+	
+	// Horizontal and vertical steps (distance between lines) rounded on numbers of 10.
+	var x_step = Math.floor(data.values.length / (amount_of_lines_x - 1)) / 10 * 10;
+	var y_step = Math.floor(get_max_y() / (amount_of_lines_above_zero - 2) / 10) * 10;
+	
+	function get_x(val) {
+		// Calculates the x position of a value (value relatively to the graph minus margin and padding).
+		correction = -((width - x_margin * 2) / ((x_step * Math.floor(data.values.length / x_step)) + x_step));
+		return ((width - x_margin * 2 - x_padding * 2) / ((x_step * Math.floor(data.values.length / x_step)))) * val + x_margin + x_padding - correction;
+	}
+				
+	function get_y(val) {
+		// Calculates the y position of a value (value relatively to the graph minus margin and padding).
+		correction = -((height - y_margin * 2 - y_padding * 2) / ((y_step * Math.ceil(get_max_y() / y_step)) - (y_step * Math.ceil(get_min_y() / y_step)) + y_step)) * ((y_step * Math.floor(get_min_y() / y_step)));
+		return height - ((height - y_margin * 2 - y_padding * 2) / ((y_step * Math.ceil(get_max_y() / y_step)) - (y_step * Math.floor(get_min_y() / y_step)))) * val - y_margin - x_padding - correction;
+	}
+	
+	if (graph.getContext) {
+	
+		// Context of the graph and the style.
+		var ctx = graph.getContext('2d');
+		ctx.lineWidth = 1;
+		ctx.strokeStyle = '#ccc';
+		ctx.font = 'italic 8pt sans-serif';
+		ctx.fillStyle = "#222";
+		ctx.textAlign = "center";
+
+		for (var i = 0; i <= x_step * Math.floor(data.values.length / x_step); i += x_step) {
+			// Draws the dates per step...
+			// If the end of data is not reached.
+			if (data.values[i]) {
+				date = data.values[i].x.getDate() + "-" +  (data.values[i].x.getMonth() + 1) + "-" +  data.values[i].x.getFullYear();
+				ctx.fillText(date, get_x(i), height - y_margin + 20);
+			
+			// Prevents that 30-12-2008 is not drawn.
+			} else if (data.values[i - 1]) {
+				date = data.values[i - 1].x.getDate() + "-" +  (data.values[i - 1].x.getMonth() + 1) + "-" +  data.values[i - 1].x.getFullYear();
+				ctx.fillText(date, get_x(i), height - y_margin + 20);
+			}
+			
+			// Draw the vertical lines.
+			ctx.beginPath();
+			ctx.moveTo(get_x(i), y_margin);
+			ctx.lineTo(get_x(i), height - y_margin);
+			ctx.stroke();
+		}
+		
+		// Style for the vertical text.
+		ctx.textAlign = "right"
+		ctx.textBaseline = "middle";
+		amount_of_y_lines_below_zero = -(Math.floor(get_min_y() / y_step));
+		for (var i = -y_step * amount_of_y_lines_below_zero; i <= y_step * Math.ceil(get_max_y() / y_step); i += y_step) {
+			
+			// Draws the vertical text for every step.
+			ctx.fillText(i, x_margin - 10, get_y(i));
+			
+			// Draws the horizontal lines.
+			ctx.beginPath();
+			ctx.moveTo(x_margin, get_y(i));
+			ctx.lineTo(width - x_margin, get_y(i));
+			ctx.stroke();
+		}
+		
+		// Draws the line of the graph for every datapoint.
+		ctx.lineWidth = 2;
+		ctx.strokeStyle = '#99f';
+		ctx.beginPath();
+        ctx.moveTo(get_x(0), get_y(data.values[0].y));
+		for(var i = 1; i < data.values.length; i++) {
+			ctx.lineTo(get_x(i), get_y(data.values[i].y));
+		}
+		ctx.stroke();
+	}
+}
+
+data = read_data();
+console.log(create_transform([10, 20], [10, 20])(15)); // Prints 15.
+draw_graph("graph1", 8, 8);
+draw_graph("graph2", 6, 6);
+draw_graph("graph3", 4, 4);
+</script>
+</body>
+</html>
